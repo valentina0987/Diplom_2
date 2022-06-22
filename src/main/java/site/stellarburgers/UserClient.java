@@ -1,5 +1,4 @@
 package site.stellarburgers;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
@@ -10,7 +9,7 @@ import static io.restassured.RestAssured.given;
 public class UserClient extends RestAssuredClient {
     private static final String USER_PATH = "api/auth/";
 
-    @Step
+    @Step("Создание уникального пользователя")
     public ValidatableResponse create(User user) {
 
         return given()
@@ -21,7 +20,7 @@ public class UserClient extends RestAssuredClient {
                 .then();
     }
 
-    @Step
+    @Step("Авторизация пользователя")
     public ValidatableResponse login(UserCredentialsForLogin credentials) {
         return given()
                 .spec(getBaseSpec())
@@ -31,7 +30,7 @@ public class UserClient extends RestAssuredClient {
                 .then();
     }
 
-    @Step
+    @Step("Изменение данных пользователя после авторизации")
     public ValidatableResponse updateWithAuthorization(UserCredentialsForUpdate credentials) {
         return given()
                 .spec(getBaseSpec()).auth().oauth2(credentials.authorization)
@@ -41,7 +40,7 @@ public class UserClient extends RestAssuredClient {
                 .then();
     }
 
-    @Step
+    @Step("Изменение данных пользователя без авторизации")
     public ValidatableResponse updateWithoutAuthorization(UserCredentialsForUpdate credentials) {
         return given()
                 .spec(getBaseSpec())
@@ -51,7 +50,7 @@ public class UserClient extends RestAssuredClient {
                 .then();
     }
 
-    @Step
+    @Step("Выход из учетной записи")
     public ValidatableResponse logout(String token) {
         String json = "{\"token\":" + "\"" + token + "\"}";
         return given()

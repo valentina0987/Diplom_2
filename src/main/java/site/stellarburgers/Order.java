@@ -1,5 +1,4 @@
 package site.stellarburgers;
-
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class Order {
@@ -14,7 +13,7 @@ public class Order {
 
     }
 
-    public static Order getOrderWithoutIngredients(){
+    public static Order getWithoutIngredients(){
         Order order = new Order();
         order.ingredients = null;
 

@@ -11,7 +11,7 @@ import site.stellarburgers.User;
 import site.stellarburgers.UserClient;
 import site.stellarburgers.UserCredentialsForLogin;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateUserTest {
 
     private User user;
@@ -41,7 +41,7 @@ public class CreateUserTest {
         boolean isCreated = responseCreate.extract().path("success");
         token = responseLogin.extract().path("refreshToken");
 
-        Assert.assertEquals(statusCodeCreate, 200);
+        Assert.assertEquals(200, statusCodeCreate);
         Assert.assertTrue(isCreated);
     }
 

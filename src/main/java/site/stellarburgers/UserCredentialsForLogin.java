@@ -1,5 +1,4 @@
 package site.stellarburgers;
-
 import com.github.javafaker.Faker;
 
 public class UserCredentialsForLogin {

@@ -32,7 +32,7 @@ public class UpdateUserCredentialsTest {
         @Test
         @DisplayName("User can be updated with authorization")
         @Description("Проверка изменения данных пользователя с авторизацией")
-        public void userCanUpdatedCredentialsWithAuthorization()  {
+        public void userCanUpdateCredentialsWithAuthorization()  {
 
             ValidatableResponse response = userClient.create(user);
 
@@ -62,7 +62,7 @@ public class UpdateUserCredentialsTest {
         @Test
         @DisplayName("User can not be updated without authorization")
         @Description("Проверка изменения данных пользователя без авторизации")
-        public void userCanNotUpdatedCredentialsWithoutAuthorization()  {
+        public void userCanNotUpdateCredentialsWithoutAuthorization()  {
 
             ValidatableResponse response = userClient.create(user);
 
@@ -76,10 +76,8 @@ public class UpdateUserCredentialsTest {
             int statusCode = responseUpdate.extract().statusCode();
             String messageError = responseUpdate.extract().path("message");
 
-
             Assert.assertEquals(statusCode, 401);
             Assert.assertEquals(messageError, "You should be authorised");
 
 }
-
 }

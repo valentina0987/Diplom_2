@@ -11,7 +11,7 @@ import site.stellarburgers.User;
 import site.stellarburgers.UserClient;
 import site.stellarburgers.UserCredentialsForLogin;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginUserTest {
 
     private User user;

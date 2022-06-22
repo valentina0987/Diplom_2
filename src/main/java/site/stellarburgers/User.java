@@ -1,5 +1,4 @@
 package site.stellarburgers;
-
 import com.github.javafaker.Faker;
 
 public class User {
@@ -22,7 +21,6 @@ public class User {
         this.name = name;
         return this;
     }
-
 
     public User setPassword(String password){
         this.password = password;

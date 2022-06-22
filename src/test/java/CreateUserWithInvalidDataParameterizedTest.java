@@ -38,8 +38,8 @@ public class CreateUserWithInvalidDataParameterizedTest {
         int actualCodeResult = response.extract().statusCode();
         String actualMessage = response.extract().path("message");
 
-        Assert.assertEquals(actualCodeResult, expectedCodeResult);
-        Assert.assertEquals(actualMessage, expectedMessage);
+        Assert.assertEquals(expectedCodeResult, actualCodeResult);
+        Assert.assertEquals(expectedMessage, actualMessage);
 
     }
 
