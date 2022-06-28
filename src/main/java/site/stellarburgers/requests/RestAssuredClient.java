@@ -1,4 +1,4 @@
-package site.stellarburgers;
+package site.stellarburgers.requests;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;

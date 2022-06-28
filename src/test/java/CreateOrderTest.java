@@ -5,13 +5,17 @@ import jdk.jfr.Description;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import site.stellarburgers.*;
-import java.util.List;
+import site.stellarburgers.data.Order;
+import site.stellarburgers.data.User;
+import site.stellarburgers.data.UserCredentialsForLogin;
+import site.stellarburgers.requests.OrderListOfClient;
+import site.stellarburgers.requests.UserClient;
 
+import java.util.List;
+import static org.apache.http.HttpStatus.*;
 
 public class CreateOrderTest {
 
-    private Order order;
     private OrderListOfClient orderListOfClient;
     private String authorization;
 
@@ -20,9 +24,9 @@ public class CreateOrderTest {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         orderListOfClient = new OrderListOfClient();
         UserClient userClient = new UserClient();
-        User user = User.getRandom();
-        userClient.create(user);
-        authorization = userClient.login(UserCredentialsForLogin.from(user)).extract().path("accessToken").toString().substring(7);
+        User user = User.getUserRandom();
+        userClient.createUser(user);
+        authorization = userClient.loginUser(UserCredentialsForLogin.from(user)).extract().path("accessToken").toString().substring(7);
     }
 
 
@@ -33,12 +37,12 @@ public class CreateOrderTest {
 
         ValidatableResponse responseGetInformationAboutIngredients = orderListOfClient.getInformationAboutIngredients();
         List<String> listOfIngredients = responseGetInformationAboutIngredients.extract().jsonPath().getJsonObject("data._id");
-        ValidatableResponse responseCreate = orderListOfClient.createWithAuthorized(new Order(new String[]{listOfIngredients.get(0), listOfIngredients.get(1)}), authorization);
+        ValidatableResponse responseCreate = orderListOfClient.createOrderWithAuthorized(new Order(new String[]{listOfIngredients.get(0), listOfIngredients.get(1)}), authorization);
 
         int statusCodeCreate = responseCreate.extract().statusCode();
         String name = responseCreate.extract().path("name");
 
-        Assert.assertEquals(statusCodeCreate, 200);
+        Assert.assertEquals(statusCodeCreate, SC_OK);
         Assert.assertNotEquals("Order is null", orderListOfClient, 0);
     }
 
@@ -49,12 +53,12 @@ public class CreateOrderTest {
 
         ValidatableResponse responseGetInformationAboutIngredients = orderListOfClient.getInformationAboutIngredients();
         List<String> listOfIngredients = responseGetInformationAboutIngredients.extract().jsonPath().getJsonObject("data._id");
-        ValidatableResponse responseCreate = orderListOfClient.createWithoutAuthorized(new Order(new String[]{listOfIngredients.get(0), listOfIngredients.get(1)}));
+        ValidatableResponse responseCreate = orderListOfClient.createOrderWithoutAuthorized(new Order(new String[]{listOfIngredients.get(0), listOfIngredients.get(1)}));
 
         int statusCodeCreate = responseCreate.extract().statusCode();
         String name = responseCreate.extract().path("name");
 
-        Assert.assertEquals(statusCodeCreate, 200);
+        Assert.assertEquals(statusCodeCreate, SC_OK);
         Assert.assertNotEquals("Order is null", orderListOfClient, 0);
     }
 
@@ -65,11 +69,11 @@ public class CreateOrderTest {
 
         ValidatableResponse responseGetInformationAboutIngredients = orderListOfClient.getInformationAboutIngredients();
         List<String> listOfIngredients = responseGetInformationAboutIngredients.extract().jsonPath().getJsonObject("data._id");
-        ValidatableResponse responseCreate = orderListOfClient.createWithoutAuthorized(Order.getWithoutIngredients());
+        ValidatableResponse responseCreate = orderListOfClient.createOrderWithoutAuthorized(Order.getOrderWithoutIngredients());
         int statusCodeCreate = responseCreate.extract().statusCode();
         String message = responseCreate.extract().path("message");
 
-        Assert.assertEquals(statusCodeCreate, 400);
+        Assert.assertEquals(statusCodeCreate, SC_BAD_REQUEST);
         Assert.assertEquals(message, "Ingredient ids must be provided");
 
     }
@@ -81,9 +85,9 @@ public class CreateOrderTest {
 
         ValidatableResponse responseGetInformationAboutIngredients = orderListOfClient.getInformationAboutIngredients();
         List<String> listOfIngredients = responseGetInformationAboutIngredients.extract().jsonPath().getJsonObject("data._id");
-        ValidatableResponse responseCreate = orderListOfClient.createWithoutAuthorized(Order.getOrderWithDefaultHashIngredients());
+        ValidatableResponse responseCreate = orderListOfClient.createOrderWithoutAuthorized(Order.getOrderWithDefaultHashIngredients());
         int statusCodeCreate = responseCreate.extract().statusCode();
-        Assert.assertEquals(statusCodeCreate, 500);
+        Assert.assertEquals(statusCodeCreate, SC_INTERNAL_SERVER_ERROR);
 
     }
 }

@@ -1,4 +1,4 @@
-package site.stellarburgers;
+package site.stellarburgers.data;
 import com.github.javafaker.Faker;
 
 public class User {
@@ -17,22 +17,22 @@ public class User {
 
     public User(){}
 
-    public User setName(String name){
+    public User setUserName(String name){
         this.name = name;
         return this;
     }
 
-    public User setPassword(String password){
+    public User setUserPassword(String password){
         this.password = password;
         return this;
     }
 
-    public User setEmail(String email){
+    public User setUserEmail(String email){
         this.email = email;
         return this;
     }
 
-    public static User getRandom(){
+    public static User getUserRandom(){
 
         final String name = faker.name().firstName();
         final String password = faker.internet().password();
@@ -42,19 +42,19 @@ public class User {
 
     public static User getUserWithoutEmail(){
         return new User().
-                setName(faker.name().firstName()).
-                setPassword(faker.internet().password());
+                setUserName(faker.name().firstName()).
+                setUserPassword(faker.internet().password());
     }
 
     public static User getUserWithoutName(){
         return new User().
-                setEmail(faker.internet().emailAddress()).
-                setPassword(faker.internet().password());
+                setUserEmail(faker.internet().emailAddress()).
+                setUserPassword(faker.internet().password());
     }
 
     public static User getUserWithoutPassword(){
         return new User().
-                setName(faker.name().firstName()).
-                setEmail(faker.internet().emailAddress());
+                setUserName(faker.name().firstName()).
+                setUserEmail(faker.internet().emailAddress());
     }
 }

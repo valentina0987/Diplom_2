@@ -1,4 +1,4 @@
-package site.stellarburgers;
+package site.stellarburgers.data;
 import com.github.javafaker.Faker;
 
 public class UserCredentialsForLogin {
@@ -18,8 +18,8 @@ public class UserCredentialsForLogin {
 
 
     public static UserCredentialsForLogin getUserCredentialsWithInvalidEmailAndPassword(User user){
-        user.setEmail(faker.internet().emailAddress());
-        user.setPassword(faker.internet().password());
+        user.setUserEmail(faker.internet().emailAddress());
+        user.setUserPassword(faker.internet().password());
         return new UserCredentialsForLogin(user.email, user.password);
     }
 }

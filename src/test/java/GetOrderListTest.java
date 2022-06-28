@@ -5,12 +5,14 @@ import jdk.jfr.Description;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import site.stellarburgers.*;
+import site.stellarburgers.data.Order;
+import site.stellarburgers.data.User;
+import site.stellarburgers.data.UserCredentialsForLogin;
+import site.stellarburgers.requests.OrderListOfClient;
+import site.stellarburgers.requests.UserClient;
 
 import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotEquals;
+import static org.apache.http.HttpStatus.*;
 
 public class GetOrderListTest {
     private OrderListOfClient orderListOfClient;
@@ -24,13 +26,13 @@ public class GetOrderListTest {
 
         orderListOfClient = new OrderListOfClient();
         userClient = new UserClient();
-        user = User.getRandom();
-        userClient.create(user);
-        authorization = userClient.login(UserCredentialsForLogin.from(user)).extract().path("accessToken").toString().substring(7);
+        user = User.getUserRandom();
+        userClient.createUser(user);
+        authorization = userClient.loginUser(UserCredentialsForLogin.from(user)).extract().path("accessToken").toString().substring(7);
 
         ValidatableResponse responseGetInformationAboutIngredients = orderListOfClient.getInformationAboutIngredients();
         List<String> listOfIngredients = responseGetInformationAboutIngredients.extract().jsonPath().getJsonObject("data._id");
-        ValidatableResponse responseCreateOrder =  orderListOfClient.createWithAuthorized(new Order(new String[]{listOfIngredients.get(0),listOfIngredients.get(1)}),authorization);
+        ValidatableResponse responseCreateOrder =  orderListOfClient.createOrderWithAuthorized(new Order(new String[]{listOfIngredients.get(0),listOfIngredients.get(1)}),authorization);
     }
 
     @Test
@@ -43,7 +45,7 @@ public class GetOrderListTest {
         boolean isSuccess = response.extract().path("success");
         int countOrders = response.extract().path("totalToday");
 
-        Assert.assertEquals(statusCodeCreate, 200);
+        Assert.assertEquals(statusCodeCreate, SC_OK);
         Assert.assertTrue(isSuccess);
         Assert.assertNotEquals(countOrders, 0);
     }
@@ -57,7 +59,7 @@ public class GetOrderListTest {
         int statusCodeCreate = response.extract().statusCode();
         String message = response.extract().path("message");
 
-        Assert.assertEquals(statusCodeCreate, 401);
+        Assert.assertEquals(statusCodeCreate, SC_UNAUTHORIZED);
         Assert.assertEquals(message, "You should be authorised");
     }
 }

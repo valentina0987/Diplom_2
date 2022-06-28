@@ -5,8 +5,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import site.stellarburgers.User;
-import site.stellarburgers.UserClient;
+import site.stellarburgers.data.User;
+import site.stellarburgers.requests.UserClient;
+import static org.apache.http.HttpStatus.*;
+
 
 @RunWith(Parameterized.class)
 public class CreateUserWithInvalidDataParameterizedTest {
@@ -21,12 +23,12 @@ public class CreateUserWithInvalidDataParameterizedTest {
         this.expectedMessage = expectedMessage;
     }
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "Тестовые данные: {0} {1}")
     public static Object[] getTestData() {
         return new Object[][] {
-                {User.getUserWithoutEmail(), 403, "Email, password and name are required fields"},
-                {User.getUserWithoutPassword(), 403, "Email, password and name are required fields"},
-                {User.getUserWithoutName(), 403, "Email, password and name are required fields"},
+                {User.getUserWithoutEmail(), SC_FORBIDDEN, "Email, password and name are required fields"},
+                {User.getUserWithoutPassword(), SC_FORBIDDEN, "Email, password and name are required fields"},
+                {User.getUserWithoutName(), SC_FORBIDDEN, "Email, password and name are required fields"},
         };
     }
 
@@ -34,7 +36,7 @@ public class CreateUserWithInvalidDataParameterizedTest {
     @DisplayName("User can not be created with invalid data")
     @Description("Проверка регистрации пользователя с неполными данными")
     public void createCourierWithInvalidData() {
-        ValidatableResponse response = new UserClient().create(user);
+        ValidatableResponse response = new UserClient().createUser(user);
         int actualCodeResult = response.extract().statusCode();
         String actualMessage = response.extract().path("message");
 

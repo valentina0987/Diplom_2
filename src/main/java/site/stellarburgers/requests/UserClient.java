@@ -1,16 +1,21 @@
-package site.stellarburgers;
+package site.stellarburgers.requests;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
+import site.stellarburgers.data.UserCredentialsForLogin;
+import site.stellarburgers.data.UserCredentialsForUpdate;
+import site.stellarburgers.data.User;
 
 import static io.restassured.RestAssured.given;
+import static org.apache.http.HttpStatus.*;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserClient extends RestAssuredClient {
     private static final String USER_PATH = "api/auth/";
 
     @Step("Создание уникального пользователя")
-    public ValidatableResponse create(User user) {
+    public ValidatableResponse createUser(User user) {
 
         return given()
                 .spec(getBaseSpec())
@@ -21,7 +26,7 @@ public class UserClient extends RestAssuredClient {
     }
 
     @Step("Авторизация пользователя")
-    public ValidatableResponse login(UserCredentialsForLogin credentials) {
+    public ValidatableResponse loginUser(UserCredentialsForLogin credentials) {
         return given()
                 .spec(getBaseSpec())
                 .body(credentials)
@@ -31,7 +36,7 @@ public class UserClient extends RestAssuredClient {
     }
 
     @Step("Изменение данных пользователя после авторизации")
-    public ValidatableResponse updateWithAuthorization(UserCredentialsForUpdate credentials) {
+    public ValidatableResponse updateUserDataWithAuthorization(UserCredentialsForUpdate credentials) {
         return given()
                 .spec(getBaseSpec()).auth().oauth2(credentials.authorization)
                 .body(credentials)
@@ -41,7 +46,7 @@ public class UserClient extends RestAssuredClient {
     }
 
     @Step("Изменение данных пользователя без авторизации")
-    public ValidatableResponse updateWithoutAuthorization(UserCredentialsForUpdate credentials) {
+    public ValidatableResponse updateUserDataWithoutAuthorization(UserCredentialsForUpdate credentials) {
         return given()
                 .spec(getBaseSpec())
                 .body(credentials)
@@ -58,7 +63,7 @@ public class UserClient extends RestAssuredClient {
                 .body(json)
                 .when()
                 .post(USER_PATH + "logout")
-                .then().assertThat().statusCode(200);
+                .then().assertThat().statusCode(SC_OK);
     }
 
 }

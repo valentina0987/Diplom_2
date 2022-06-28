@@ -1,27 +1,31 @@
-package site.stellarburgers;
+package site.stellarburgers.requests;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
+import site.stellarburgers.data.Order;
+
 import static io.restassured.RestAssured.given;
+
 public class OrderListOfClient extends RestAssuredClient {
+    final static String ORDER_URL = "api/orders";
 
     @Step("Создание заказа без авторизации")
-    public ValidatableResponse createWithoutAuthorized(Order order) {
+    public ValidatableResponse createOrderWithoutAuthorized(Order order) {
 
         return given()
                 .spec(getBaseSpec())
                 .body(order)
                 .when()
-                .post("api/orders").then();
+                .post(ORDER_URL).then();
     }
 
     @Step("Создание заказа с авторизацией")
-    public ValidatableResponse createWithAuthorized(Order order, String authorization) {
+    public ValidatableResponse createOrderWithAuthorized(Order order, String authorization) {
 
         return given()
                 .spec(getBaseSpec()).auth().oauth2(authorization)
                 .body(order)
                 .when()
-                .post("api/orders").then();
+                .post(ORDER_URL).then();
     }
 
 
@@ -40,7 +44,7 @@ public class OrderListOfClient extends RestAssuredClient {
         return given()
                 .spec(getBaseSpec())
                 .when()
-                .get("api/orders").then();
+                .get(ORDER_URL).then();
     }
 
     @Step("Получение списка всех заказов пользователя с авторизацией")
@@ -49,6 +53,6 @@ public class OrderListOfClient extends RestAssuredClient {
         return given()
                 .spec(getBaseSpec()).auth().oauth2(authorization)
                 .when()
-                .get("api/orders").then();
+                .get(ORDER_URL).then();
     }
 }

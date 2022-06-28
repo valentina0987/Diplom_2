@@ -6,9 +6,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import site.stellarburgers.User;
-import site.stellarburgers.UserClient;
-import site.stellarburgers.UserCredentialsForUpdate;
+import site.stellarburgers.data.User;
+import site.stellarburgers.requests.UserClient;
+import site.stellarburgers.data.UserCredentialsForUpdate;
+import static org.apache.http.HttpStatus.*;
 
 public class UpdateUserCredentialsTest {
 
@@ -21,7 +22,7 @@ public class UpdateUserCredentialsTest {
         public void setUp() {
             RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
             userClient = new UserClient();
-            user = User.getRandom();
+            user = User.getUserRandom();
         }
 
         @After
@@ -34,7 +35,7 @@ public class UpdateUserCredentialsTest {
         @Description("Проверка изменения данных пользователя с авторизацией")
         public void userCanUpdateCredentialsWithAuthorization()  {
 
-            ValidatableResponse response = userClient.create(user);
+            ValidatableResponse response = userClient.createUser(user);
 
             authorization = response.extract().path("accessToken").toString().substring(7);
             token = response.extract().path("refreshToken");
@@ -43,7 +44,7 @@ public class UpdateUserCredentialsTest {
             String password = user.password;
 
             ValidatableResponse responseUpdate = userClient.
-                    updateWithAuthorization(UserCredentialsForUpdate.
+                    updateUserDataWithAuthorization(UserCredentialsForUpdate.
                             getUserCredentialsWithNewCredentials(user,authorization));
 
             int statusCode = responseUpdate.extract().statusCode();
@@ -52,7 +53,7 @@ public class UpdateUserCredentialsTest {
             String emailBeforeUpdate = responseUpdate.extract().jsonPath().getJsonObject("user.email");
             String passwordBeforeUpdate = user.password;
 
-            Assert.assertEquals(statusCode, 200);
+            Assert.assertEquals(statusCode, SC_OK);
             Assert.assertTrue(isSuccess);
             Assert.assertNotEquals(name, nameBeforeUpdate);
             Assert.assertNotEquals(email, emailBeforeUpdate);
@@ -64,19 +65,19 @@ public class UpdateUserCredentialsTest {
         @Description("Проверка изменения данных пользователя без авторизации")
         public void userCanNotUpdateCredentialsWithoutAuthorization()  {
 
-            ValidatableResponse response = userClient.create(user);
+            ValidatableResponse response = userClient.createUser(user);
 
             authorization = response.extract().path("accessToken").toString().substring(7);
             token = response.extract().path("refreshToken");
 
             ValidatableResponse responseUpdate = userClient.
-                    updateWithoutAuthorization(UserCredentialsForUpdate.
+                    updateUserDataWithoutAuthorization(UserCredentialsForUpdate.
                             getUserCredentialsWithoutAuthorization(user));
 
             int statusCode = responseUpdate.extract().statusCode();
             String messageError = responseUpdate.extract().path("message");
 
-            Assert.assertEquals(statusCode, 401);
+            Assert.assertEquals(statusCode, SC_UNAUTHORIZED);
             Assert.assertEquals(messageError, "You should be authorised");
 
 }

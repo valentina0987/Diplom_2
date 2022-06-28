@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
@@ -7,11 +6,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import site.stellarburgers.User;
-import site.stellarburgers.UserClient;
-import site.stellarburgers.UserCredentialsForLogin;
+import site.stellarburgers.data.User;
+import site.stellarburgers.requests.UserClient;
+import site.stellarburgers.data.UserCredentialsForLogin;
+import static org.apache.http.HttpStatus.*;
 
-//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateUserTest {
 
     private User user;
@@ -22,7 +21,7 @@ public class CreateUserTest {
     public void setUp() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         userClient = new UserClient();
-        user = User.getRandom();
+        user = User.getUserRandom();
     }
 
     @After
@@ -35,13 +34,13 @@ public class CreateUserTest {
     @Description("Проверка создания нового уникального пользователя с валидными данными")
     public void uniqueUserCanBeCreatedWithValidData() {
 
-        ValidatableResponse responseCreate = userClient.create(user);
-        ValidatableResponse responseLogin =  userClient.login(UserCredentialsForLogin.from(user));
+        ValidatableResponse responseCreate = userClient.createUser(user);
+        ValidatableResponse responseLogin =  userClient.loginUser(UserCredentialsForLogin.from(user));
         int statusCodeCreate = responseCreate.extract().statusCode();
         boolean isCreated = responseCreate.extract().path("success");
         token = responseLogin.extract().path("refreshToken");
 
-        Assert.assertEquals(200, statusCodeCreate);
+        Assert.assertEquals(SC_OK, statusCodeCreate);
         Assert.assertTrue(isCreated);
     }
 
@@ -50,13 +49,13 @@ public class CreateUserTest {
     @Description("Проверка создания пользователя, который уже зарегистрирован")
     public void userCanNotBeCreatedBecauseHeWasAlreadyExists()  {
 
-        userClient.create(user);
-        ValidatableResponse response = userClient.create(user);
+        userClient.createUser(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         String messageError = response.extract().path("message");
-        token = userClient.login(UserCredentialsForLogin.from(user)).extract().path("refreshToken");
+        token = userClient.loginUser(UserCredentialsForLogin.from(user)).extract().path("refreshToken");
 
-        Assert.assertEquals(statusCode, 403);
+        Assert.assertEquals(statusCode, SC_FORBIDDEN);
         Assert.assertEquals(messageError, "User already exists");
     }
 
